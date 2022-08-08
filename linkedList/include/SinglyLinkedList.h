@@ -49,6 +49,43 @@ public:
     this->size = vec.size();
   }
 
+  void insert(int position, T val) {
+    if (position>size) {
+      std::cout<<"Given a position out of bounds. Ignoring"<<std::endl;
+      return;
+    }
+    if(position == 0) {
+      push_front(val);
+      return;
+    }
+
+    int index = 0;
+    auto temp = head;
+    while(index!=position-1) {
+      index++;
+      temp = temp->next;
+    }
+    auto nodeToAdd = std::make_shared<sllNode<T>>(val);
+    nodeToAdd->next = temp->next;
+    temp->next = nodeToAdd;
+
+  }
+
+  void reverse() {
+
+    auto curr = head;
+    shared_ptr<sllNode<T>> prev = nullptr, next = nullptr;
+
+    while(curr != nullptr) {
+      next = curr->next;
+      curr->next = prev;
+      prev=curr;
+      curr =next;
+    }
+    head = prev;
+     
+  }
+
   void push_front(T val) {
     auto nodeToAdd = std::make_shared<sllNode<T>>(val);
     nodeToAdd->next = head;
