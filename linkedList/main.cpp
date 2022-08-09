@@ -3,16 +3,17 @@
 #include "SinglyLinkedList.h"
 int main() {
   
-  std::vector<float> values = {0,1,2,3,4,5};
-  SinglyLinkedList<float> linkedList = values;
+  std::vector<float> values = {0,1,2,3,4,5,6,7};
+  auto linkedList = SinglyLinkedList<float>(values);
   linkedList.printList();
-  linkedList.push_back(2);
+
+  linkedList.pop_front();
   linkedList.printList();
-  linkedList.push_front(-100);
+
+  linkedList.pop_back();
   linkedList.printList();
-  linkedList.insert(3, 1000);
-  linkedList.printList();
-  linkedList.reverse();
+
+  linkedList.popAt(2);
   linkedList.printList();
 
   return 0;

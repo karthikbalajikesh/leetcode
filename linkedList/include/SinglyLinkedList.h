@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include "utilityFuncs.h"
+#include <optional>
 
 using std::shared_ptr;
 
@@ -27,7 +28,7 @@ public:
   SinglyLinkedList(T startVal) {
     head = std::make_shared<sllNode<T>>(startVal);
     std::cout<< "Created a singly linked list with the head as "<<startVal<<std::endl;
-    size = 1;
+    _size = 1;
   }
 
   SinglyLinkedList(std::vector<T> vec) {
@@ -46,11 +47,11 @@ public:
       temp = temp->next;
     }
 
-    this->size = vec.size();
+    this->_size = vec.size();
   }
 
   void insert(int position, T val) {
-    if (position>size) {
+    if (position>_size) {
       std::cout<<"Given a position out of bounds. Ignoring"<<std::endl;
       return;
     }
@@ -72,7 +73,6 @@ public:
   }
 
   void reverse() {
-
     auto curr = head;
     shared_ptr<sllNode<T>> prev = nullptr, next = nullptr;
 
@@ -90,7 +90,7 @@ public:
     auto nodeToAdd = std::make_shared<sllNode<T>>(val);
     nodeToAdd->next = head;
     head = nodeToAdd;
-    size++;
+    _size++;
   }
 
   void push_back(T val) {
@@ -100,11 +100,62 @@ public:
       temp = temp->next;
     } 
     temp->next = std::make_shared<sllNode<T>>(val);
-    size++;
+    _size++;
+  }
+
+  // pop operations
+  void pop_front() {
+    if(_size==0) {
+      return;
+    }
+    _size--;
+    head = head->next;
+  }
+
+  void pop_back() {
+    if(_size==0) {
+      return;
+    }
+    if(_size ==1) {
+      head=nullptr;
+      _size--;
+      return;
+    }
+    auto temp = head;
+    while(temp->next->next!=nullptr) {
+      temp = temp->next;
+    }
+    _size--;
+    temp->next = nullptr;
+  }
+
+  void popAt(int index) {
+    if(index <0 || index >=_size) {
+      return;
+    }
+    if(index == 0) {
+      pop_front();
+      return;
+    }
+    auto temp = head;
+    for(int i=0;i<index-1;i++) {
+      temp = temp->next;
+    }
+    _size--;
+    temp->next = temp->next->next;
+  }
+
+  void clear() {
+    head = nullptr;
+    _size = 0;
+  }
+
+  inline size_t size() const {
+    return this->_size;
   }
 
   void printList()  {
-    if(size == 0) {
+    if(_size == 0) {
       std::cout<<"Linked list is empty"<<std::endl;
       return;
     }
@@ -112,13 +163,13 @@ public:
     std::cout<< "PRINTING THE LINKED LIST : "<<std::endl;
     std::vector<T> vec = getAsVector();
     print_range(vec.begin(), vec.end(), "->");
-    
+    std::cout<<"Size of the list is:  "<<_size<<std::endl;
   }
 
   std::vector<T> getAsVector() {
     
     std::vector<T> result;
-    if(size == 0) {
+    if(_size == 0) {
       return result;
     }
 
@@ -134,7 +185,32 @@ public:
     return result;
   }
 
-private: 
+  int find(T valueToCheck) {
+    auto temp = head;
+    int index = -1;
+    while(temp!=nullptr) {
+      ++index;
+
+      if(temp->value == valueToCheck)
+        return index;
+      temp = temp->next;
+    }
+
+    return -1;
+  }
+
+  std::optional<T> atIndex(int indexToCheck) {
+    if(indexToCheck >=_size || indexToCheck <0) {
+      return std::nullopt;
+    }
+    auto temp = head;
+    for(int index = 0; index <indexToCheck; ++index){
+      temp = temp->next;
+    }
+    return temp->value;
+  }
+
+protected: 
   shared_ptr<sllNode<T>> head = nullptr;
-  int size = 0;
+  int _size = 0;
 };
